@@ -1,11 +1,19 @@
 #include <cstdio>
 #include <iostream>
-#include "utils.h"
 using namespace std;
 
 
 
-
+// The enigma config
+const char rotors[5][27] = {"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
+                            "AJDKSIRUXBLHWTMCQGZNPYFVOE",
+                            "BDFHJLCPRTXVZNYEIWGAKMUSQO",
+                            "ESOVPZJAYQUIRHXLNFTGKDCMWB",
+                            "VZBRGITYUPSDNHLXAWMJQOFECK"};
+const char reflector[27] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+char excg[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+char p[3];
+int rotor_num[3];
 
 void enigma_clock(){
     int c1 = (letter2order(p[0]) + 1)%26;

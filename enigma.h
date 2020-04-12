@@ -9,20 +9,25 @@ const char rotors_config[5][27] = {"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
                             "BDFHJLCPRTXVZNYEIWGAKMUSQO",
                             "ESOVPZJAYQUIRHXLNFTGKDCMWB",
                             "VZBRGITYUPSDNHLXAWMJQOFECK"};
-
+const char reflector[27] = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
 class Enigma_encoder
 {
     private:
         // The enigma rotor config
-        char exchange_rotor[27];
-        char rotors[ROTOR_NUM][27];
-        char reflector[27];
+        int exchange_rotor[26];
+        int reflect_rotor[26];
+        int candidate_rotors[5][27];
         // The enigma initial config
         int rotor_idx[ROTOR_NUM];
-        char rotor_clock[ROTOR_NUM];
+        int rotor_clock[ROTOR_NUM];
     public:
-        Enigma_encoder(int _rotor_index[ROTOR_NUM], char _rotor_clock[ROTOR_NUM]);
-        ~Enigma_encoder();
+        Enigma_encoder(int _rotor_index[ROTOR_NUM], int _rotor_clock[ROTOR_NUM]);
+        void show_info();
+        void clock_tik();
+        int rotor_encode(int _char_index);
+        int exchange_encode(int _char_index);
+        int reflect_encode(int _char_index);
 };
+
 
 #endif
