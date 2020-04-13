@@ -1,4 +1,6 @@
 #include "enigma.h"
+#include <iostream>
+using namespace std;
 
 int main()
 {
@@ -6,8 +8,14 @@ int main()
     int init[3] = {23,3,7};
     Enigma_encoder enig_test(rot,init);
     enig_test.show_info();
-    enig_test.clock_tik();
-    enig_test.rotor_encode(0);
+    char input;
+    char output;
+    while(true)
+    {
+        cin>>input;
+        output = enig_test.encode(input);
+    }
+    
     
     return 0;
 }

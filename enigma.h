@@ -20,6 +20,7 @@ class Enigma_encoder
         // The enigma initial config
         int rotor_idx[ROTOR_NUM];
         int rotor_clock[ROTOR_NUM];
+        int clock_temp1, clock_temp2;
     public:
         Enigma_encoder(int _rotor_index[ROTOR_NUM], int _rotor_clock[ROTOR_NUM]);
         void show_info();
@@ -27,6 +28,7 @@ class Enigma_encoder
         int rotor_encode(int _char_index);
         int exchange_encode(int _char_index);
         int reflect_encode(int _char_index);
+        char encode(char _char);
 };
 
 
