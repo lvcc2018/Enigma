@@ -22,7 +22,7 @@ class Enigma_encoder
         int rotor_clock[ROTOR_NUM];
         int clock_temp1, clock_temp2;
     public:
-        Enigma_encoder(int _rotor_index[ROTOR_NUM], int _rotor_clock[ROTOR_NUM]);
+        Enigma_encoder(int _rotor_index[ROTOR_NUM], char _rotor_clock[ROTOR_NUM]);
         void show_info();
         void clock_tik();
         int rotor_encode(int _char_index);
