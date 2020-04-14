@@ -29,6 +29,8 @@ class Enigma_encoder
         int exchange_encode(int _char_index);
         int reflect_encode(int _char_index);
         char encode(char _char);
+        void reset_rotor_index(char _rotor_clock[ROTOR_NUM]);
+        void poland_decode(char _daily_key[6]);
 };
 
 

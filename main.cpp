@@ -16,11 +16,16 @@ int main()
     enig_test.show_info();
     char input;
     char output;
+    
     while (true)
     {
         cin >> input;
         output = enig_test.encode(input);
+        cout<<output;
     }
-
+    /*
+    char daily_key[6] = {'I','D','S','K','U','T'};
+    enig_test.poland_decode(daily_key);
+    */
     return 0;
 }

@@ -49,6 +49,15 @@ Enigma_encoder::Enigma_encoder(int _rotor_index[ROTOR_NUM], char _rotor_clock[RO
     }
 }
 
+void Enigma_encoder::reset_rotor_index(char _rotor_clock[ROTOR_NUM])
+{
+    clock_temp1 = clock_temp2 = 0;
+    for (int i = 0; i < ROTOR_NUM; i++)
+    {
+        rotor_clock[i] = letter2order(_rotor_clock[i]);
+    }
+}
+
 void Enigma_encoder::show_info()
 {
     printf("rotor index: ");
@@ -157,6 +166,37 @@ char Enigma_encoder::encode(char _char)
     idx = rotor_encode(idx);
     idx = exchange_encode(idx);
     char ans = order2letter(idx);
-    printf("%c\n", ans);
+    //printf("%c\n", ans);
     return ans;
+}
+
+void Enigma_encoder::poland_decode(char _daily_key[6])
+{
+    char rotor_clock[3];
+    for (int i = 0; i < 26; i++)
+        for (int j = 0; j < 26; j++)
+            for (int k = 0; k < 26; k++)
+            {
+                rotor_clock[0] = order2letter(i);
+                rotor_clock[1] = order2letter(j);
+                rotor_clock[2] = order2letter(k);
+                reset_rotor_index(rotor_clock);
+                char temp1 = encode(_daily_key[0]);
+                char temp2 = encode(_daily_key[1]);
+                char temp3 = encode(_daily_key[2]);
+                temp1 = encode(temp1);
+                temp2 = encode(temp2);
+                temp3 = encode(temp3);
+                if (temp1 == _daily_key[3] && temp2 == _daily_key[4] && temp3 == _daily_key[5])
+                {
+                    printf("Successful! %c %c %c\n",order2letter(i),order2letter(j),order2letter(k));
+                    return;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+    printf("Failed...\n");
+    return;
 }
