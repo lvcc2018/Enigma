@@ -3,6 +3,7 @@
 #define ROTOR_NUM 3
 #include <string>
 
+
 const char rotors_config[5][27] = {"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
                                    "AJDKSIRUXBLHWTMCQGZNPYFVOE",
                                    "BDFHJLCPRTXVZNYEIWGAKMUSQO",
@@ -36,6 +37,8 @@ public:
     void reset_rotor_index(int _rotor_index[ROTOR_NUM]);
     void reset_exchange_rotor(char _exchange_rotor[26]);
 
+    // encode and decode
+    void encode_paragraph(std::string _origin_text);
     void poland_decode(char _daily_key[6]);
 };
 

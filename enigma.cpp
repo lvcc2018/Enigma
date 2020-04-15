@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 
 int letter2order(char letter)
 {
@@ -60,7 +61,7 @@ void Enigma_encoder::reset_rotor_clock(char _rotor_clock[ROTOR_NUM])
 
 void Enigma_encoder::reset_rotor_index(int _rotor_index[ROTOR_NUM])
 {
-    for(int i=0;i<ROTOR_NUM;i++)
+    for (int i = 0; i < ROTOR_NUM; i++)
     {
         rotor_idx[i] = _rotor_index[i];
     }
@@ -210,4 +211,43 @@ void Enigma_encoder::reset_exchange_rotor(char _exchange_rotor[26])
         exchange_rotor[i] = letter2order(_exchange_rotor[i]);
     }
     return;
+}
+
+void Enigma_encoder::encode_paragraph(std::string _origin_text)
+{
+    int rot[3];
+    char rot_chr[3];
+    char original_text[100];
+    char cipher_text[100];
+    char daily_key[6];
+    std::ifstream fin(_origin_text);
+    for (int i = 0; i < 3; i++)
+        fin >> rot[i];
+    for (int i = 0; i < 3; i++)
+        fin >> rot_chr[i];
+    int idx = 0;
+    while (!fin.eof())
+        fin >> original_text[idx++];
+    fin.close();
+    reset_rotor_index(rot);
+    reset_rotor_clock(rot_chr);
+    // show_info();
+    daily_key[0] = encode(rot_chr[0]);
+    daily_key[1] = encode(rot_chr[1]);
+    daily_key[2] = encode(rot_chr[2]);
+    daily_key[3] = encode(rot_chr[0]);
+    daily_key[4] = encode(rot_chr[1]);
+    daily_key[5] = encode(rot_chr[2]);
+    reset_rotor_index(rot);
+    reset_rotor_clock(rot_chr);
+    for (int i = 0; i < idx - 1; i++)
+        cipher_text[i] = encode(original_text[i]);
+    std::ofstream fout("cipher_text");
+    for (int i = 0; i < 6; i++)
+        fout << daily_key[i];
+    fout << std::endl;
+    for (int i = 0; i < idx - 1; i++)
+        fout << cipher_text[i];
+    fout << std::endl;
+    fout.close();
 }
