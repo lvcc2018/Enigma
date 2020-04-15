@@ -211,7 +211,6 @@ void Enigma_encoder::poland_decode(std::string _cipher_text)
                 temp3 = encode(temp3);
                 if (temp1 == daily_key[3] && temp2 == daily_key[4] && temp3 == daily_key[5])
                 {
-                    printf("%c %c %c\n", order2letter(i), order2letter(j), order2letter(k));
                     reset_rotor_clock(rotor_clock);
                     for(int i=0;i<idx-1;i++) fout<<encode(cipher_text[i]);
                     fout<<std::endl; 
@@ -261,10 +260,10 @@ void Enigma_encoder::encode_paragraph(std::string _origin_text)
         cipher_text[i] = encode(original_text[i]);
     std::ofstream fout("cipher_text");
     for (int i = 0; i < ROTOR_NUM; i++)
-        fout << rotor_idx[i];
+        fout << rotor_idx[i]<<" ";
     fout << std::endl;
     for (int i = 0; i < 6; i++)
-        fout << daily_key[i];
+        fout << daily_key[i]<<" ";
     fout << std::endl;
     for (int i = 0; i < idx - 1; i++)
         fout << cipher_text[i];
