@@ -1,6 +1,7 @@
 #ifndef ENIGMA
 #define ENIGMA
 #define ROTOR_NUM 3
+#define MAX_LENGTH 100
 #include <string>
 
 
@@ -40,6 +41,7 @@ public:
     // encode and decode
     void encode_paragraph(std::string _origin_text);
     void poland_decode(std::string _cipher_text);
+    void turing_decode(std::string origin_cipher_text);
 };
 
 #endif

@@ -188,10 +188,11 @@ void Enigma_encoder::poland_decode(std::string _cipher_text)
     reset_rotor_index(rotor_idx);
     int idx = 0;
     char daily_key[6];
-    char cipher_text[100];
+    char cipher_text[MAX_LENGTH];
     for (int i = 0; i < 6; i++)
         fin >> daily_key[i];
-    while(!fin.eof()) fin>>cipher_text[idx++];
+    while (!fin.eof())
+        fin >> cipher_text[idx++];
     fin.close();
     char rotor_clock[3];
     std::ofstream fout("translate_text");
@@ -212,8 +213,9 @@ void Enigma_encoder::poland_decode(std::string _cipher_text)
                 if (temp1 == daily_key[3] && temp2 == daily_key[4] && temp3 == daily_key[5])
                 {
                     reset_rotor_clock(rotor_clock);
-                    for(int i=0;i<idx-1;i++) fout<<encode(cipher_text[i]);
-                    fout<<std::endl; 
+                    for (int i = 0; i < idx - 1; i++)
+                        fout << encode(cipher_text[i]);
+                    fout << std::endl;
                 }
             }
     fout.close();
@@ -233,8 +235,8 @@ void Enigma_encoder::encode_paragraph(std::string _origin_text)
 {
     int rot[3];
     char rot_chr[3];
-    char original_text[100];
-    char cipher_text[100];
+    char original_text[MAX_LENGTH];
+    char cipher_text[MAX_LENGTH];
     char daily_key[6];
     std::ifstream fin(_origin_text);
     for (int i = 0; i < 3; i++)
@@ -260,13 +262,120 @@ void Enigma_encoder::encode_paragraph(std::string _origin_text)
         cipher_text[i] = encode(original_text[i]);
     std::ofstream fout("cipher_text");
     for (int i = 0; i < ROTOR_NUM; i++)
-        fout << rotor_idx[i]<<" ";
+        fout << rotor_idx[i] << " ";
     fout << std::endl;
     for (int i = 0; i < 6; i++)
-        fout << daily_key[i]<<" ";
+        fout << daily_key[i] << " ";
     fout << std::endl;
     for (int i = 0; i < idx - 1; i++)
         fout << cipher_text[i];
     fout << std::endl;
     fout.close();
+}
+
+void Enigma_encoder::turing_decode(std::string _origin_cipher_text)
+{
+    int idx = 0;
+    char origin_text[MAX_LENGTH];
+    char cipher_text[MAX_LENGTH];
+    std::ifstream fin(_origin_cipher_text);
+    char chr;
+    while (true)
+    {
+        fin.get(chr);
+        if (chr == '\n')
+            break;
+        origin_text[idx] = chr;
+        idx++;
+    }
+
+    idx = 0;
+    while (!fin.eof())
+    {
+        fin.get(chr);
+        cipher_text[idx] = chr;
+        idx++;
+    }
+    idx--;
+
+    int map[26][26] = {0};
+    for (int i = 0; i < idx; i++)
+        map[letter2order(origin_text[i])][letter2order(cipher_text[i])]++;
+
+    int ring[3] = {0};
+    for (int i = 0; i < 26; i++)
+    {
+        for (int j = 0; j < 26; j++)
+        {
+            if (map[i][j] > 0)
+            {
+                for (int k = 0; k < 26; k++)
+                {
+                    if (map[j][k] > 0 && map[k][i] > 0)
+                    {
+                        ring[0] = i;
+                        ring[1] = j;
+                        ring[2] = k;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if (ring[0] == 0 && ring[1] == 0 && ring[2] == 0)
+    {
+        std::cout << "Finding rings failed..." << std::endl;
+        return;
+    }
+    int index[3];
+    for (int i = 0; i < idx; i++)
+    {
+        if (origin_text[i] == order2letter(ring[0]) && cipher_text[i] == order2letter(ring[1]))
+            index[0] = i;
+        if (origin_text[i] == order2letter(ring[1]) && cipher_text[i] == order2letter(ring[2]))
+            index[1] = i;
+        if (origin_text[i] == order2letter(ring[2]) && cipher_text[i] == order2letter(ring[0]))
+            index[2] = i;
+    }
+    long long ans_num = 0;
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 5; j++)
+        {
+            if (i == j)
+                continue;
+            for (int k = 0; k < 5; k++)
+            {
+                if (k == i || k == j)
+                    continue;
+                int rotor_index[3] = {i, j, k};
+                reset_rotor_index(rotor_index);
+                for (int l = 0; l < 26; l++)
+                    for (int m = 0; m < 26; m++)
+                        for (int n = 0; n < 26; n++)
+                        {
+                            char rotor_clock[3] = {order2letter(l), order2letter(m), order2letter(n)};
+                            reset_rotor_clock(rotor_clock);
+                            for (int o = 0; o < 26; o++)
+                            {
+                                char v1 = order2letter(o);
+                                for (int order = 0; order < index[0]; order++)
+                                    clock_tik();
+                                char v2 = encode(v1);
+                                for (int order = index[0] + 1; order < index[1]; order++)
+                                    clock_tik();
+                                char v3 = encode(v2);
+                                for (int order = index[1] + 1; order < index[2]; order++)
+                                    clock_tik();
+                                char v4 = encode(v3);
+                                if (v1 == v4)
+                                {
+                                    ans_num++;
+                                    //std::cout<<i<<' '<<j<<' '<<k<<' '<<l<<' '<<m<<' '<<n<<std::endl;
+                                }
+                            }
+                        }
+            }
+        }
+    std::cout<<ans_num;
+    return;
 }
