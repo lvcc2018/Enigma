@@ -179,9 +179,22 @@ char Enigma_encoder::encode(char _char)
     return ans;
 }
 
-void Enigma_encoder::poland_decode(char _daily_key[6])
+void Enigma_encoder::poland_decode(std::string _cipher_text)
 {
+    int rotor_idx[3];
+    std::ifstream fin(_cipher_text);
+    for (int i = 0; i < 3; i++)
+        fin >> rotor_idx[i];
+    reset_rotor_index(rotor_idx);
+    int idx = 0;
+    char daily_key[6];
+    char cipher_text[100];
+    for (int i = 0; i < 6; i++)
+        fin >> daily_key[i];
+    while(!fin.eof()) fin>>cipher_text[idx++];
+    fin.close();
     char rotor_clock[3];
+    std::ofstream fout("translate_text");
     for (int i = 0; i < 26; i++)
         for (int j = 0; j < 26; j++)
             for (int k = 0; k < 26; k++)
@@ -190,17 +203,21 @@ void Enigma_encoder::poland_decode(char _daily_key[6])
                 rotor_clock[1] = order2letter(j);
                 rotor_clock[2] = order2letter(k);
                 reset_rotor_clock(rotor_clock);
-                char temp1 = encode(_daily_key[0]);
-                char temp2 = encode(_daily_key[1]);
-                char temp3 = encode(_daily_key[2]);
+                char temp1 = encode(daily_key[0]);
+                char temp2 = encode(daily_key[1]);
+                char temp3 = encode(daily_key[2]);
                 temp1 = encode(temp1);
                 temp2 = encode(temp2);
                 temp3 = encode(temp3);
-                if (temp1 == _daily_key[3] && temp2 == _daily_key[4] && temp3 == _daily_key[5])
+                if (temp1 == daily_key[3] && temp2 == daily_key[4] && temp3 == daily_key[5])
                 {
                     printf("%c %c %c\n", order2letter(i), order2letter(j), order2letter(k));
+                    reset_rotor_clock(rotor_clock);
+                    for(int i=0;i<idx-1;i++) fout<<encode(cipher_text[i]);
+                    fout<<std::endl; 
                 }
             }
+    fout.close();
     return;
 }
 
@@ -243,6 +260,9 @@ void Enigma_encoder::encode_paragraph(std::string _origin_text)
     for (int i = 0; i < idx - 1; i++)
         cipher_text[i] = encode(original_text[i]);
     std::ofstream fout("cipher_text");
+    for (int i = 0; i < ROTOR_NUM; i++)
+        fout << rotor_idx[i];
+    fout << std::endl;
     for (int i = 0; i < 6; i++)
         fout << daily_key[i];
     fout << std::endl;

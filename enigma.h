@@ -39,7 +39,7 @@ public:
 
     // encode and decode
     void encode_paragraph(std::string _origin_text);
-    void poland_decode(char _daily_key[6]);
+    void poland_decode(std::string _cipher_text);
 };
 
 #endif
