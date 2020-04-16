@@ -4,7 +4,6 @@
 #define MAX_LENGTH 100
 #include <string>
 
-
 const char rotors_config[5][27] = {"EKMFLGDQVZNTOWYHXUSPAIBRCJ",
                                    "AJDKSIRUXBLHWTMCQGZNPYFVOE",
                                    "BDFHJLCPRTXVZNYEIWGAKMUSQO",
@@ -42,6 +41,7 @@ public:
     void encode_paragraph(std::string _origin_text);
     void poland_decode(std::string _cipher_text);
     void turing_decode(std::string origin_cipher_text);
+    bool test_ring(int idx1, int idx2, int idx3);
 };
 
 #endif
