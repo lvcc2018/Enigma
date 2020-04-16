@@ -303,6 +303,7 @@ void Enigma_encoder::turing_decode(std::string _origin_cipher_text)
         map[letter2order(origin_text[i])][letter2order(cipher_text[i])]++;
 
     int ring_three[MAX_LENGTH][3] = {0};
+    // int ring_five[MAX_LENGTH][5] = {0};
     int idx1 = 0, idx2 = 0;
     for (int i = 0; i < 26; i++)
     {
@@ -329,19 +330,62 @@ void Enigma_encoder::turing_decode(std::string _origin_cipher_text)
                             ring_three[idx1][1] = j;
                             ring_three[idx1][2] = k;
                             idx1++;
-                            continue;
                         }
                     }
+                    /*
+                    if (map[j][k] > 0)
+                    {
+                        for (int l = 0; l < 26; l++)
+                        {
+                            if (map[k][l] > 0)
+                            {
+                                for (int m = 0; m < 26; m++)
+                                {
+                                    if (map[l][m] > 0 && map[m][i] > 0)
+                                    {
+                                        bool same = false;
+                                        for (int m = 0; m < idx2; m++)
+                                        {
+                                            if (i == ring_five[m][0] || i == ring_five[m][1] || i == ring_five[m][2] || i == ring_five[m][3] || i == ring_five[m][4])
+                                            {
+                                                same = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!same)
+                                        {
+                                            ring_five[idx2][0] = i;
+                                            ring_five[idx2][1] = j;
+                                            ring_five[idx2][2] = k;
+                                            ring_five[idx2][3] = l;
+                                            ring_five[idx2][4] = m;
+                                            idx2++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    */
                 }
             }
         }
     }
-
-    if (ring_three[0][0] == 0 && ring_three[0][1] == 0 && ring_three[0][2] == 0)
+    /*
+    for (int i = 0; i < idx1; i++)
+        for (int j = 0; j < 3; j++)
+            std::cout << ring_three[i][j] << ' ';
+    std::cout << std::endl;
+    for (int i = 0; i < idx2; i++)
+        for (int j = 0; j < 5; j++)
+            std::cout << ring_five[i][j] << ' ';
+    if (ring_three[0][0] == 0 && ring_three[0][1] == 0 && ring_three[0][2] == 0 && ring_five[0][0] == 0 && ring_five[0][1] == 0 && ring_five[0][2] == 0 && ring_five[0][3] == 0)
     {
         std::cout << "Finding rings failed..." << std::endl;
         return;
     }
+    */
+
     int index[MAX_LENGTH][3];
     for (int j = 0; j < idx1; j++)
         for (int i = 0; i < idx; i++)
@@ -353,6 +397,7 @@ void Enigma_encoder::turing_decode(std::string _origin_cipher_text)
             if (origin_text[i] == order2letter(ring_three[j][2]) && cipher_text[i] == order2letter(ring_three[j][0]))
                 index[j][2] = i;
         }
+    long long sum = 0;
     for (int i = 0; i < 5; i++)
         for (int j = 0; j < 5; j++)
         {
@@ -371,11 +416,26 @@ void Enigma_encoder::turing_decode(std::string _origin_cipher_text)
                             char rotor_clock[3] = {order2letter(l), order2letter(m), order2letter(n)};
                             reset_rotor_clock(rotor_clock);
                             bool perhaps_right = true;
-                            for(int p=0;p<idx1;p++)
+                            for (int p = 0; p < idx1; p++)
                             {
-                                perhaps_right = test_ring(index[p][0],index[p][1],index[p][2]);
+                                perhaps_right = test_ring(index[p][0], index[p][1], index[p][2]);
                             }
-                            if(perhaps_right) std::cout<<i<<' '<<j<<' '<<k<<' '<<l<<' '<<m<<' '<<n<<std::endl;
+                            if (perhaps_right)
+                                sum++;
+                            bool bingo = true;
+                            reset_rotor_clock(rotor_clock);
+                            for (int tic = 0; tic < idx; tic++)
+                            {
+                                if (cipher_text[tic] == encode(origin_text[tic]))
+                                    continue;
+                                else
+                                {
+                                    bingo = false;
+                                    break;
+                                }
+                            }
+                            if (bingo)
+                                std::cout <<"The initial rotor index is "<< i << ' ' << j << ' ' << k << "  The initial letter is " << order2letter(l) << ' ' << order2letter(m) << ' ' << order2letter(n) << std::endl;
                         }
             }
         }
@@ -402,5 +462,4 @@ bool Enigma_encoder::test_ring(int idx1, int idx2, int idx3)
         }
     }
     return false;
-
 }
